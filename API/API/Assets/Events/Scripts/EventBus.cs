@@ -16,10 +16,10 @@ public class EventBus : MonoBehaviour
     public delegate void DataProcessorEventHandler(GameObject data);
     public event DataProcessorEventHandler OnDataCall;
     public Action<GameObject> Action;
-    private string _heroName = "Batman";
+    //private string _heroName = "Batman";
     public const float Speed = 134.4567f;
     public readonly float SpeedSet = 134.45f;
-    private GameState _gameState = new();
+    //private GameState _gameState = new();
     private GameObject _go;
 
     private void Awake()

@@ -247,9 +247,24 @@ public class ShapesManager : MonoBehaviour
         }
     }
 
+/// /////////////////////////////////////////////////////////////////////////////////
+
+    private IEnumerator MoveObject(Transform objToMove, Vector3 targetPosition, float duration)
+    {
+        Vector3 startPosition = objToMove.position;
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            objToMove.position = Vector3.Lerp(startPosition, targetPosition, t);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        objToMove.position = targetPosition; // Убедитесь, что объект достигает точной позиции после окончания перемещения
+    }
 
 
-
+/// /////////////////////////////////////////////////////////////////////////////////
     private IEnumerator FindMatchesAndCollapse(RaycastHit2D hit2)
     {
         //get the second item that was part of the swipe
@@ -257,8 +272,8 @@ public class ShapesManager : MonoBehaviour
         shapes.Swap(hitGo, hitGo2);
 
         //move the swapped ones
-        hitGo.transform.positionTo(Constants.AnimationDuration, hitGo2.transform.position);
-        hitGo2.transform.positionTo(Constants.AnimationDuration, hitGo.transform.position);
+        StartCoroutine(MoveObject(hitGo.transform, hitGo2.transform.position, Constants.AnimationDuration)); //// замена дутвин
+        StartCoroutine(MoveObject(hitGo2.transform, hitGo.transform.position, Constants.AnimationDuration));
         yield return new WaitForSeconds(Constants.AnimationDuration);
 
         //get the matches via the helper methods
@@ -271,8 +286,8 @@ public class ShapesManager : MonoBehaviour
         //if user's swap didn't create at least a 3-match, undo their swap
         if (totalMatches.Count() < Constants.MinimumMatches)
         {
-            hitGo.transform.positionTo(Constants.AnimationDuration, hitGo2.transform.position);
-            hitGo2.transform.positionTo(Constants.AnimationDuration, hitGo.transform.position);
+            StartCoroutine(MoveObject(hitGo.transform, hitGo2.transform.position, Constants.AnimationDuration)); //// замена дутвин
+            StartCoroutine(MoveObject(hitGo2.transform, hitGo.transform.position, Constants.AnimationDuration));
             yield return new WaitForSeconds(Constants.AnimationDuration);
 
             shapes.UndoSwap();
@@ -406,8 +421,10 @@ public class ShapesManager : MonoBehaviour
     {
         foreach (var item in movedGameObjects)
         {
-            item.transform.positionTo(Constants.MoveAnimationMinDuration * distance, BottomRight +
-                new Vector2(item.GetComponent<Shape>().Column * CandySize.x, item.GetComponent<Shape>().Row * CandySize.y));
+            var shape = item.GetComponent<Shape>();
+            var targetPosition = BottomRight + new Vector2(shape.Column * CandySize.x, shape.Row * CandySize.y); //// замена дутвин
+            var distance2 = Vector2.Distance(item.transform.position, targetPosition);
+            StartCoroutine(MoveObject(item.transform, targetPosition, Constants.MoveAnimationMinDuration * distance2));
         }
     }
 
@@ -562,7 +579,4 @@ public class ShapesManager : MonoBehaviour
 
         throw new System.Exception("Wrong type, check your premade level");
     }
-
-
-
 }
