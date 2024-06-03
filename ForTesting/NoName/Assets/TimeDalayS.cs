@@ -10,12 +10,21 @@ public class TimeDalayS : MonoBehaviour
     int current = 0;
     void Start()
     {
-        StartCoroutine(CorRepeat(() => DisplayPrint(current), delaySec));
+        //StartCoroutine(CorRepeat(() => DisplayPrint(current), delaySec));
+        StartCoroutine(CorRepeat(() => OnInput(), delaySec));
     }
 
     public void DisplayPrint(int value)
     {
         print(value);
+    }
+
+    public void OnInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            print("Pressed");
+        }
     }
 
     public void UpdateRepeat(Action callback, int delay)
@@ -32,12 +41,14 @@ public class TimeDalayS : MonoBehaviour
         while (true)
         {
             callback?.Invoke();
+            current = (int) (delay + Time.time);
             yield return new WaitForSeconds(delay);
         }
     }
     
     private void Update()
     {
+        
         //UpdateRepeat(() => DisplayPrint(current), delaySec);
     }
 }
