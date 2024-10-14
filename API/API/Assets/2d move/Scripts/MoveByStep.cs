@@ -5,7 +5,7 @@ using System;
 
 public class MoveByStep : MonoBehaviour
 {
-    [SerializeField] private GameFieldsStorage _pointStorage;
+    [SerializeField] private GameFieldsStorage _gameFieldsStorage;
     [SerializeField] [Range(0, 40)] private float _speed; 
     [SerializeField] [Range(0.1f, 2)] private float _delay;
     private bool isCanNewTurn = true;
@@ -15,30 +15,28 @@ public class MoveByStep : MonoBehaviour
     
     void Awake()
     {
-        if (_pointStorage != null && _pointStorage.GreenZoneListPoints.Count > 0)
+        
+        if (_gameFieldsStorage._ActiveLocationListPoints != null && _gameFieldsStorage._ActiveLocationListPoints.Count > 0)
         {
-            transform.position = _pointStorage.GetPoint(0).position;
+            transform.position = _gameFieldsStorage.GetPoint(0).position;
         }
         _startMovePoint = transform.position;
+        print(_gameFieldsStorage.GetPoint(0).position);
     }
-
-    void Start()
-    {
-        
-    }
+    
     
     IEnumerator Moving(int value)
     {
         for (; value > 0; value--)
         {
-            if (_targetPoint == _pointStorage.GreenZoneListPoints.Count)
+            if (_targetPoint == _gameFieldsStorage._ActiveLocationListPoints.Count)
             {
                 _targetPoint = 0;
             }
             yield return new WaitForSeconds(_delay);
-            while (Vector2.Distance(_startMovePoint, _pointStorage.GetPoint(_targetPoint).position) > 0.01f)
+            while (Vector2.Distance(_startMovePoint, _gameFieldsStorage.GetPoint(_targetPoint).position) > 0.01f)
             {
-                transform.position = Vector2.MoveTowards(transform.position, _pointStorage.GetPoint(_targetPoint).position, _speed * Time.deltaTime); 
+                transform.position = Vector2.MoveTowards(transform.position, _gameFieldsStorage.GetPoint(_targetPoint).position, _speed * Time.deltaTime); 
                 _startMovePoint = transform.position;
                 yield return null;
             }
@@ -51,15 +49,33 @@ public class MoveByStep : MonoBehaviour
     private IEnumerator OnReachedPoint()
     {
         yield return StartCoroutine(Moving(Dice.CubNumberResult));
-        
-        
-        if (_nowPoint == 4)
+        if (_gameFieldsStorage.GetActivateLocation() == GameFieldsStorage.ActiveLocation.Green)
         {
-            _targetPoint = 11;
+            if (_nowPoint == 4)
+            {
+                _targetPoint = 11;
+            }
+            if (_nowPoint == 3)
+            {
+                _gameFieldsStorage.SetActiveLocation(GameFieldsStorage.ActiveLocation.White);
+                _targetPoint = 0;
+            }
+            if (_nowPoint == 10)
+            {
+                _targetPoint = 0;
+            }
         }
-        if (_nowPoint == 10)
+        else if (_gameFieldsStorage.GetActivateLocation() == GameFieldsStorage.ActiveLocation.White)
         {
-            _targetPoint = 0;
+            if (_nowPoint == 5)
+            {
+                _targetPoint = 10;
+            }
+            if (_nowPoint == 8)
+            {
+                _gameFieldsStorage.SetActiveLocation(GameFieldsStorage.ActiveLocation.Green);
+                _targetPoint = 5;
+            }
         }
         print(_nowPoint);
         isCanNewTurn = true;

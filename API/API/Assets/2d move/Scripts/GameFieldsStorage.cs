@@ -6,33 +6,43 @@ using UnityEngine.Serialization;
 
 public class GameFieldsStorage : MonoBehaviour
 {
-    enum ActiveLocation
+    public enum ActiveLocation
     {
         Green, White
     }
     
     [field: SerializeField] public List<GameObject> _ActiveLocationListPoints;
-
-    [field: SerializeField] public List<GameObject> GreenZoneListPoints;
-    [field: SerializeField] public List<GameObject> WhiteZoneListPoints;
-
+    [field: SerializeField] private List<GameObject> GreenZoneListPoints;
+    [field: SerializeField] private List<GameObject> WhiteZoneListPoints;
+    [SerializeField] private ActiveLocation activeLocation;
     
 
-    void Start()
+    void Awake()
     {
-        _ActiveLocationListPoints.Clear();
-        _ActiveLocationListPoints.AddRange(GreenZoneListPoints);
-        // ActiveLocation activeLocation = ActiveLocation.Green;
-        // switch (activeLocation)
-        // {
-        //     case ActiveLocation.Green : _ActiveLocationListPoints = GreenZoneListPoints; break;
-        //     case ActiveLocation.White : _ActiveLocationListPoints = WhiteZoneListPoints; break;
-        // }
+        SetActiveLocation(activeLocation); // from data
     }
+    
+    public void SetActiveLocation(ActiveLocation setActiveLocation)
+    {
+        activeLocation = setActiveLocation;
+        switch (activeLocation)
+        {
+            case ActiveLocation.Green : 
+                _ActiveLocationListPoints.Clear();
+                _ActiveLocationListPoints.AddRange(GreenZoneListPoints);
+                break;
+            case ActiveLocation.White : 
+                _ActiveLocationListPoints.Clear();
+                _ActiveLocationListPoints.AddRange(WhiteZoneListPoints);
+                break;
+        }
+    }
+
+    public ActiveLocation GetActivateLocation() => activeLocation;
 
     public Transform GetPoint(int value)
     {
-        return value <= GreenZoneListPoints.Count ? GreenZoneListPoints[value].transform : throw new Exception("За пределами допустимых значений");
+        return value <= _ActiveLocationListPoints.Count ? _ActiveLocationListPoints[value].transform : throw new Exception("За пределами допустимых значений");
     }
     
     
