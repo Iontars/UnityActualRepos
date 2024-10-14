@@ -6,7 +6,12 @@ using UnityEngine.Serialization;
 
 public class GameFieldsStorage : MonoBehaviour
 {
-    private List<Transform> _listPoints;
+    enum ActiveLocation
+    {
+        Green, White
+    }
+    
+    [field: SerializeField] public List<GameObject> _ActiveLocationListPoints;
 
     [field: SerializeField] public List<GameObject> GreenZoneListPoints;
     [field: SerializeField] public List<GameObject> WhiteZoneListPoints;
@@ -15,7 +20,14 @@ public class GameFieldsStorage : MonoBehaviour
 
     void Start()
     {
-        
+        _ActiveLocationListPoints.Clear();
+        _ActiveLocationListPoints.AddRange(GreenZoneListPoints);
+        // ActiveLocation activeLocation = ActiveLocation.Green;
+        // switch (activeLocation)
+        // {
+        //     case ActiveLocation.Green : _ActiveLocationListPoints = GreenZoneListPoints; break;
+        //     case ActiveLocation.White : _ActiveLocationListPoints = WhiteZoneListPoints; break;
+        // }
     }
 
     public Transform GetPoint(int value)
