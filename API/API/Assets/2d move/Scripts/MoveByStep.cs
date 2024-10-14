@@ -53,11 +53,15 @@ public class MoveByStep : MonoBehaviour
         yield return StartCoroutine(Moving(Dice.CubNumberResult));
         
         
-        if (_targetPoint == 5)
+        if (_nowPoint == 4)
         {
             _targetPoint = 11;
         }
-        print("приехали");
+        if (_nowPoint == 10)
+        {
+            _targetPoint = 0;
+        }
+        print(_nowPoint);
         isCanNewTurn = true;
     }
     
