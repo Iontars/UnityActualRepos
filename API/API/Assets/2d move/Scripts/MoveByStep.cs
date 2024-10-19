@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using _2d_move.Scripts;
+using Random = UnityEngine.Random;
 
 public class MoveByStep : MonoBehaviour
 {
     [SerializeField] private GameFieldsStorage _gameFieldsStorage;
+    [SerializeField] private EventManager _eventManager;
     [SerializeField] [Range(0, 40)] private float _speed; 
     [SerializeField] [Range(0.1f, 2)] private float _delay;
     private bool isCanNewTurn = true;
@@ -15,7 +18,7 @@ public class MoveByStep : MonoBehaviour
     
     void Awake()
     {
-        
+        // load from data
         if (_gameFieldsStorage._ActiveLocationListPoints != null && _gameFieldsStorage._ActiveLocationListPoints.Count > 0)
         {
             transform.position = _gameFieldsStorage.GetPoint(0).position;
@@ -25,11 +28,15 @@ public class MoveByStep : MonoBehaviour
     }
     
     
-    IEnumerator Moving(int value)
+    IEnumerator Moving(int diceValue)
     {
-        for (; value > 0; value--)
+        for (; diceValue > 0; diceValue--)
         {
-            if (_targetPoint == _gameFieldsStorage._ActiveLocationListPoints.Count)
+            if (_nowPoint == _gameFieldsStorage._ActiveLocationListPoints.Count - 1)
+            {
+                _targetPoint = 0;
+            }
+            if (_nowPoint == 10)
             {
                 _targetPoint = 0;
             }
@@ -42,6 +49,7 @@ public class MoveByStep : MonoBehaviour
             }
             _targetPoint++;
             _nowPoint = _targetPoint - 1;
+            
         }
     }
     
@@ -51,11 +59,12 @@ public class MoveByStep : MonoBehaviour
         yield return StartCoroutine(Moving(Dice.CubNumberResult));
         if (_gameFieldsStorage.GetActivateLocation() == GameFieldsStorage.ActiveLocation.Green)
         {
-            if (_nowPoint == 4)
+            if (_nowPoint == 4 && _eventManager.IsUnlockCrossroadGreenMap)
             {
-                _targetPoint = 11;
+                _targetPoint = Random.Range(0, 2) == 0 ? 11 : 5;
+                print("!!!!!!"+ _targetPoint);
             }
-            if (_nowPoint == 3)
+            if (_nowPoint == 3 && _eventManager.IsUnlockWhiteMap)
             {
                 _gameFieldsStorage.SetActiveLocation(GameFieldsStorage.ActiveLocation.White);
                 _targetPoint = 0;

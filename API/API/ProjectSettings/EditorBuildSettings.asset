@@ -14,5 +14,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/2d move/Scene/2d move.unity
     guid: 509dff8e3cdb9754cae2123125e17e36
+  - enabled: 1
+    path: Assets/SaveInFile/Scene/SaveInFile.unity
+    guid: 48c7069a19c31c34eb1b71de5b120bd9
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: a87dee630dd3fc74a954712a9ca4c904, type: 2}
